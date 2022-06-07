@@ -1,12 +1,12 @@
-# Introduction
+# SAP Modernization Lab
 
 ## Goal
 
 In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize your ERP processes with the tools and functionalities available on the ServiceNow platform.
 
-## Introduction
+## Background
 
-A business process refers to a set of activities that have to be performed to complete an end-to-end business scenario. There are multiple business processes in ERPs, some common ones are listed below:
+A business process refers to a set of activities that have to be performed to complete an end-to-end business scenario. There are multiple business processes in ERPs, the most common ones are listed below:
 
 Name | What is it?
 ------------ | -------------
@@ -18,52 +18,26 @@ Plan to Inventory | Plan to Inventory (P2I) the process of determining the optim
 Quote to Cash | Quote-to-cash (QTC) process encompasses many sales, account management, order fulfillment, billing, and accounts receivables functions.
 Record to Report | Record to report (R2R) is a finance and accounting management process that involves collecting, processing and presenting accurate financial data.
 
-Often times, there are multiple exceptions outside of an expected business process flow (at times refered to as a "Happy Flow") that organizations need to account for - either by customizing their ERP systems or relying on manual processes that sit outside of the ERP systems. 
+Often times, there are multiple exceptions outside of an expected business process flow (sometimes refered to as a "Happy Flow") that organizations need to account for - either by customizing the ERP, or relying on manual processes that sit outside of the ERP. 
 
 Then, there is also the issue of data availability. There is a learning curve to navigating ERP systems due to the complexity of the business objects, everyday business users might not have access to the right environment and training to use these ERP systems, and need a friendlier way to interact with the data.
 
 ServiceNow Creator Workflows solves these challenges with it's low code capabilities paired with easy to configure integrations to various ERP systems. We will focus on SAP in this lab.
 
-## Getting started
+# Exercise 1: Delegation of Authority Workflows
 
-To follow the steps in this lab guide, you need a San Diego instance with Virtual Agent (VA) and NLU plugins installed and activated.
+## Introduction
 
-***If you are doing this lab as part of CreatorCon, all the necessary plugins are already activated on your instance
-and you can skip the following steps and jump to Exercise 1.***
+When it comes to automating ERP workflows, nothing is more painful, or more time consuming than the approval cycle. Couple that with a rigid system like SAP, and it becomes difficult to track, let alone automate approvals on everyday transactions like Purchase Orders, Sales Orders, Invoices, etc. 
 
-## Activate the Necessary Plugins
+In one of our customer's internal landscape, they reported having 54 different workflows that covers multiple business objects, and their solution to that was over 12,000 lines of code in a custom .NET application for approvals and authority. Some of these workflows require 7 or more levels of approvals, and any changes to personnel or approval logic, requires a major rewrite of the code, which they currently spend over 30 days a year doing. Approvers only have one desktop interface they can use to run these approvals. Obviously not scalable, and a terrible user experience! 
 
-There are a few plugins required on your instance to complete this lab. The main plugin you will need to activate is *Glide Virtual Agent*. It requires you to have the **admin** role. Once activated a number of supporting plugins will also be activated.
+![relative](images/approvalsmatrix.png)
+> It can get a lot more complicated than this!
 
-1. Search for and select **Plugins** in the left hand navigation panel.
+Thankfully, we have a quick fix for this, so let's start by showing how you can run these approval matrices on top of the Sales Order documents from SAP.
 
-    ![relative](images/pluginsearch.png)
-
-1. You may be presented with a blue prompt that says *You have been redirected to All Applications. To see the Plugins list click here.* Click **X** to close this message.
-
-    ![relative](images/bluemessageplugin.png)
-
-1. Use the Search Bar at the top of the screen to search for **Glide Virtual Agent**.
-
-1. Locate the plugin and click the **Install** button to activate the plugin.
-
-    ![relative](images/installglideva.png)
-
-1. The system also lets you know about the other plugins that are to be installed. Click the **Activate** button. (It might take up to 10 minutes to activate)
-
-    ![relative](images/activateva.png)
-
-1. After the plugin activation has completed you'll see a Success notification. Click **Close & Reload Form**.
-
-    ![relative](images/pluginsuccess.png)
-
-# Exercise 1: Set up and create your first topic using keywords
-
-## Goal
-
-In lab CCL1054-K22, we built a Student Permission application for parents to grant permission for students to participate in activities.
-
-In this exercise, we will be working within the custom application scope *Student Permission*, so we will first select this so all our work will be saved against this custom scope.
+## Let's start
 
 1. On the top navigation bar, click the **Globe** icon towards the right.
 
