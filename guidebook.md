@@ -2,7 +2,7 @@
 
 ## Goal
 
-In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize your ERP processes with the tools and functionalities available on the ServiceNow platform.
+In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform.
 
 ## Background
 
@@ -24,360 +24,289 @@ Then, there is also the issue of data availability. There is a learning curve to
 
 ServiceNow Creator Workflows solves these challenges with it's low code capabilities paired with easy to configure integrations to various ERP systems. We will focus on SAP in this lab.
 
-# Exercise 1: Delegation of Authority Workflows
+# Exercise 1: Delegation of Authority
 
 ## Introduction
 
-When it comes to automating ERP workflows, nothing is more painful, or more time consuming than the approval cycle. Couple that with a rigid system like SAP, and it becomes difficult to track, let alone automate approvals on everyday transactions like Purchase Orders, Sales Orders, Invoices, etc. 
+When it comes to automating ERP workflows, nothing is more painful, or more time consuming than the approval cycle. Couple that with a rigid system like SAP, and it becomes difficult to track, let alone automate approvals on everyday transactions like Purchase Orders, Sales Orders, Invoices, etc. A common term for this process is Delegation of Authority (DoA), or Approval Matrix.
 
-In one of our customer's internal landscape, they reported having 54 different workflows that covers multiple business objects, and their solution to that was over 12,000 lines of code in a custom .NET application for approvals and authority. Some of these workflows require 7 or more levels of approvals, and any changes to personnel or approval logic, requires a major rewrite of the code, which they currently spend over 30 days a year doing. Approvers only have one desktop interface they can use to run these approvals. Obviously not scalable, and a terrible user experience! 
+Within SAP, [there is such a feature](https://help.sap.com/doc/132b1ea8da1d4281a2da23f3cf506809/2.0.06/en-US/07dc534035524965a902c5bd6ffdbc3a.html), but it is limited in capability and does not scale for exceptional workflows.
+
+
+## Tales from the field
+
+In one of our customer's internal landscape, they reported having 54 different workflows that covers multiple business objects, and their solution to that was over 12,000 lines of code in a custom .NET application for approvals and authority. Some of these workflows require 7 or more levels of approvals, and any changes to personnel or approval logic requires a major rewrite of the code, which they currently spend over 30 days a year doing. Approvers only have one desktop interface they can use to run these approvals. Obviously not scalable, and a terrible user experience! 
 
 ![relative](images/approvalsmatrix.png)
-> It can get a lot more complicated than this!
+> The sample that we will work with, but it usually gets a lot more complicated than this ☠️
 
-Thankfully, we have a quick fix for this, so let's start by showing how you can run these approval matrices on top of the Sales Order documents from SAP.
+Thankfully, we have the solution for this, so let's start by showing how you can run these approval matrices on top of the Sales Order documents from SAP.
 
 ## Let's start
 
-1. On the top navigation bar, click the **Globe** icon towards the right.
+1. Under **All**, search and navigate to **App Engine Studio**
 
-1. Click **Application scope: Global** under the drop down.
+    ![relative](images/aesnavigate.png)
 
-1. In the list that appears, select **Student Permission**.
+1. Click **Create app** on the top right of the screen
 
-    ![relative](images/studentpermscope.gif)
+    ![relative](images/createapp.png)
 
-    The system automatically refreshes the screen.
+1. On the Create App page, name the app "Delegation of Authority", and for description, enter "Create an approval matrix for various SAP documents"
 
-We can now start building a Virtual Agent topic that allows parents to withdraw students from the registered activities by changing the state of the Permission Task from *Approved* to *Withdrawn*.
+    ![relative](images/appname.png)
 
-1. From the top menu, navigate to **All > Conversational Interfaces > Virtual Agent > Designer**.
+1. Click **Continue**
 
-    ![relative](images/menu-vadesigner.png)
+1. Leave the default roles - *admin* and *user*, and click **Continue**
 
-1. Click **Create**.
+1. Click **Go to app dashboard**
 
-    ![relative](images/createtopic.png)
+## Create a Sales Order table
 
-1. In the **Topic Properties** page, follow the list below to fill in the necessary fields.
+We will now create a table to store Sales Order document data from SAP.
 
-    Field | Value
-    ------------ | -------------
-    Name | Withdraw from activity (1)
-    Description | Withdraw a student from a registered activity (2)
-    Type | Topic (3)
-    Resume originating topic flow | **Toggle On** (4)
-    Keywords | You will notice that *Withdraw from activity* is already there when we typed in the name, now type in more key words/phrases that's related to the topic by typing in the word and hitting **tab**: *cancel, deregister, remove, drawout* (5)
+1. Under **Data**, click **Add**
 
-    When you're done, your screen should look like this:
+    ![relative](images/adddata.png)
 
-    ![relative](images/topicprops.png)
+1. Click **Create a table**
 
-1. Click **Create** on the top right. (6)
+1. Click **Get started**
 
-1. On the topic flow designer page, take a minute to familiarize yourself with the options on the page.
+1. On the *Add Data* page, click **Create from scratch**
 
-    Our first objective is to let the user choose the activity to withdraw from.
+1. For Table label, enter **SAP Sales Order**. Table name should be auto-populated.
 
-1. Drag **Reference Choice** (blue) from the left **User Input** area and drop it in between **Start** and **End**.
+1. Check **Auto number**
 
-    ![relative](images/referencechoice.gif)
+1. For Prefix, enter **SAPSO**
 
-1. Click the **Reference Choice** that you dragged in.
+    ![relative](images/tabledetails.png)
 
-1. Now you will notice that there are *5 issues* showing up on the screen, we need to fill in the *user input property* on the right hand side.
+1. Click **Continue**
 
-1. Set the fields as follows:
+1. Allow all access for *admin* and *user*, then click **Continue**
 
-    Field | Value
-    ------------ | -------------
-    Name | Choose an activity
-    Variable Name | (autofilled) choose_an_activity
-    Prompt | Which activity would you like to withdraw from?
-    Acknowledge message | Here are the details of this activity:
+    ![relative](images/tabacl.png)
 
-1. Scroll down and set the fields as follows:
+1. Close the pop-up dialog
 
-    Field | Value
+1. You should now be on tha *Table Builder* interface. Click **Add new field**, and add the following fields:
+
+    Column label | Type
     -------------- | --------------
-    Reference Type |   Record
-    Table | Permission Task \[x_snc_student_pe_0_permission_task\]
-    No records response message |   No activities found for student.
+    Document number | String
+    Document type | String
+    Amount | Decimal 
+    Sales organization | String 
+    Status | Choice (Dropdown with --None--) : New, Approval triggered, Approved, Rejected, Updated SAP
 
-1. Choice Value Expression: *Condition Builder* and click **Add condition**.
+1. Click **Save**, your screen should look like this, then click **Form views**
 
-    The system presents a pop up titled **Assign Condition**. Add *two* conditions as follows:
+    ![relative](images/addedfields.png)
 
-    Click the **Data Pill Picker** ![relative](images/datapillpicker.png)
+1. Drag the 3 fields you created from the left panel onto the form. Your screen should look like this:
 
-    **\[Student Parent\] \[is\] \[Input variables-\> User\]**
- 
-1. Click the arrow near the **Input Variables**, and click **User**.
+    ![relative](images/formedit.gif)
 
-1. Click **and** on the right that will create another condition and enter the following:
+1. Click **Save**
 
-    **\[State\] \[is\] \[Approved\]**
+Great, you now have a simple table to store Sales Order data via the SAP integration that we will be configuring next.
 
-    ![relative](images/referencechoiecondition.gif)
+## Get Sales Order data via the SAP ERP Spoke
 
-    This retrieves the activities that the parent has approved for the student.
+1. Go back to the app home page 
 
-1. Click **Save**.
+1. Under *Logic and Automation*, click **Add**
 
-1. Your **User Input Properties** should look like this once completed:
+1. In the *What do you want to add* screen, click **Flow**
 
-    ![relative](images/refchoiceuserinputcomplete.png)
+    ![relative](images/addflow.png)
+
+1. Click **Build from scratch**
+
+1. Under **Name**, enter "Get Sales Orders from SAP every hour"
+
+1. Click **Continue**
+
+1. Click **Edit this flow** once you see the *Success! Your flow is ready.* screen
+
+1. Close the pop-up box
+
+1. Click **Add trigger**
+
+1. Under the *Date* section, click **Repeat**
+
+1. Change the repeat duration to 2 hours
+
+    ![relative](images/2hourtrigger.gif)
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
+1. Click **Action**, and you should see a dropdown appear
+
+1. In the *Search* bar, enter **SAP**
+
+    ![relative](images/sapsearch.png)
+
+> You should be able to see a few different SAP spokes show up. There are 2 different integration methods to both SAP ECC (Older version) and SAP S/4 HANA available in ServiceNow's out of the box integrations available in the Enterprise package of Automation Engine. 
+<br> <br>
+Let's break down what these mean: 
+<br><br>
+**SAP ECC**: Most of the companies running on SAP are running on SAP ECC. It is the offering for a large enterprise. Companies with large volume, complex business processes and operating in multiple geographies go for SAP ECC. It is built on ABAP stack. 
+<br><br>
+**SAP S/4 HANA**: This is the latest release of SAP ERP and it can run only on HANA database. With this release, SAP has simplified their core database architecture. This together with in-memory processing enables business to do complex business computation within minutes.
+<br><br>
+**Integration via IDoc**: IDOCs or intermediary documents are another way to exchange information to and from SAP. If you are more aware of web technologies, consider IDOCs as XML. It consists of neatly defined data segments with parent and child nodes. There are specific steps to configure inbound and outbound IDOCs.
+<br><br>
+**Integration via RFC**: If you are looking at a real time SAP system integration scenario, RFC is probably the best way to go. In this case, certain functions are enabled for remote call. One such function could be for example sales order creation. Third party applications can integrate with SAP using these RFCs for a real time communication and business process validation (example price computation, minimum order check etc.).
+
+15. Click **SAP ERP**, this is a simulation of the actions available in the other prebuilt spokes.
+
+1. Click **Look up Sales Orders**
+
+    ![relative](images/lookupspokeselect.png)
+
+1. In the action that shows on the screen, have a quick look at what shows up. These are a subset of the filter options available in the OOTB spokes to retrieve a list of Sales Orders. In this exercise, we will only return one Sales Order record for easier accesibility.
+
+    ![relative](images/lookupsalesorderaction.png)
+
+1. Notice how the **Delivery Block** field is populated with **ServiceNow approval**. Delivery block when applied, blocks the sales order for delivery i.e., delivery cannot be created until the delivery block is removed by the authorized person. This list can be customised in SAP, and the logic would be that as Sales Orders are created in SAP, this Delivery Block status is automatically applied until the approval is completed in ServiceNow.
+
+1. Leave everything as it is, and click **Done**
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
+1. Under **ServiceNow Core**, click **Create Record**
+
+    ![relative](images/createrecord.png)
+
+1. On the table field, search and select **SAP Sales Order** (the custom table you created)
+
+1. Click **Add field value**, select **Document number**
+
+1. Drag the **Document number** data pill into the input field
+
+1. Repeat the above 2 steps for **Amount, Document type** and **Sales organization**
+
+    ![relative](images/createrecordfields.gif)
 
 1. Click **Save** on the top right of the screen.
 
-1. Preview your work by clicking the **Test** button on the top right corner of your screen. The system presents a pop-up window.
+1. Click **Test**
 
-1. You should see your registered activities appear for selection.
+1. Click **Run Test**
 
-    ![relative](images/vatest1.png)
+1. Click **Your test has finished running. View the flow execution details.**
 
-    > IMPORTANT: If a new Virtual Agent window doesn't launch
-    check your pop up blocker.
+    ![relative](images/testresult.png)
 
-1. You can select one of the *Permission Task records*, but note that nothing happens as we have not defined what to do with the chosen record.
+1. In the new tab that opens, click the **Create Record** action
 
-Congratulations you've finished the first step, and now you can close this window.
+1. Click the Record, if you followed the guide so far, the record should be **SAPSO0001001**
 
-## Look up records
+    ![relative](images/execution1.png)
 
-Our next task is to look up the chosen activity details based on the *Permission task* selected by the user so we can use this across the rest of the conversation.
+1. In the pop-up box, click **Open Record**, it should open in a new browser tab, ensure that all the fields are populated. (Your output will be different)
 
-1. Use the same drag and drop method to add **Lookup** (which is under *Utilities*, in grey) between **Choose an activity** and **End**.
+    ![relative](images/previewrecord1.png)
 
-    ![relative](images/lookupdrop.gif)
+Congrats! You have built the integration to get Sales Order data from SAP. Go back to the previous browser tab, but don't close anything yet.
 
-1. On the right side of your screen, fill out the **Prompt properties** as follows:
+## Building the approval matrix using decision builder
 
-    Field | Value
-    -------------- | --------------
-    Name |   Look up selected activity
-    Table | Activity \[x_snc_student_pe_0_activity]
+For this part of the exercise, we will rebuild this following approval matrix
 
-1. Under **Script**: Select the **Condition** option and click **Add condition**.
+![relative](images/approvalsmatrix.png)
 
-    ![relative](images/addcondition.png)
+1. Go back to the **App Home** tab
 
-1. A popup appears titled **Assign Condition**. Add a condition:
+1. Under *Logic and automation*, click **Add**
 
-    **[Actitvity] \[is\] \[Input variables-\> Choose An Activity-\> Activity-\> Activity\]**
+1. Click **Decision**
 
-    > Hint: You should see 4 panels altogether, refer to the walkthrough below:
+    ![relative](images/selectdecision.png)
 
-    ![relative](images/activitymatch.gif)
+1. Click **Get started**
 
-    This retrieves the *activity record* based on what the user has selected in the first step.
+1. Under Name, enter **Sales Order Approval Matrix**
 
-1. Click **Save**.
+    ![relative](images/namedecision.png)
+> If you face an issue with the Continue button, you might have to close this screen and click Decision again
 
-## Display details
+6. Click **Continue**
 
-Next, we will display the details of the *Activity record* we just looked up.
+1. Click **Edit decision table**
 
-1. Drag and drop **Card** (*which is under Bot Response, in Orange*) between **Look up selected activity** and **End**.
+1. Click **Add an input**
 
-    ![relative](images/dropcard.gif)
+1. Under label, enter **Sales order record**
 
-1. On the right side of your screen, fill out the *Response properties* as follows:
+1. Under type, select **Reference**, and under Table, search and select **SAP Sales Order**
 
-    Field | Value
-    ----- | --------------
-    Name |   Show activity details
-    Card type | Record
-    Record | Look Up Selected Activity
-    Fields | Use the **Add Field** to insert more lines
+    ![relative](images/inputso.png)
 
-    * **Activity**
+1. Click **Save** on the top right
 
-    * **Start time**
+1. Click **Add result column**
 
-    * **End time**
+    ![relative](images/approvalgroup.gif)
 
-    * **Teacher**
+1. Under Result column label, enter **Approval group**
 
-1. Click **Save** on the top right corner.
+1. Click **Result type**, then select **Reference**
 
-    Your screen should look like this:
+1. Under **Result table**, search **Group** and select **sys_user_group**
 
-    ![relative](images/completecard.png)
+1. Click **Done**
 
-1. Preview it again by clicking the **Test** button on the top right corner. You will have the *Virtual Agent* pop up, and you can choose any *Permission Task*. Your screen should look similar to this one:
+1. Under the **Approval group** column, add these selections as per our matrix at the start of this section: Finance managers, Finance controllers, CFO, CFO
 
-    ![relative](images/vatest2.png)
+    ![relative](images/selectgroups.gif)
+    
+1. Now we have the results, we need to add the conditions.
 
-1. Close the pop up *Virtual Agent* window.
+1. Click **Add condition column**
 
-Congratulations, if your conversation works, close this window and move to the next steps.
+1. In the pop-up, select the fields as per the image below
 
-## Prompt the user
+    ![relative](images/conditionsotype.png)
 
-We will now ask the user if they would like to withdraw from the activity.
+1. Click **Done**
 
-1. Drag and drop **Boolean** to the next step.
- ![relative](images/boolean.gif)
+1. Click on the **Plus sign** in between the 2 columns
 
-1. The system displays *2 issues* on the screen. Fill the **user input property** on the right hand side as follows:
+    ![relative](images/plussign.png)
 
-    Field | Value
-    -------------- | --------------
-    Name |   Confirm withdrawal
-    Variable Name | (autofilled) confirm_withdrawal
-    Prompt | Would you like to withdraw **\[Input variables-\> Choose An Activity-\> Student-\> Name\]** from this activity?
+1. Click **Add condition column**
 
-    Here is a walkthrough of how to complete the **Prompt** field above:
+1. Fill in the pop-up modal as per the image below
 
-    ![relative](images/buildprompt.gif)
+    ![relative](images/salesordamountcond.png)
 
-1. Click **Save** on the top of the page.
+1. Click **Done**
 
-1. Your flow should look like this:
+1. Click on the top left selection box, select **less than**, and Value **5000**
 
-    ![relative](images/uptoconfirm.png)
+    ![relative](images/lessthan5k.png)
 
-1. In order for the user to make a *Yes/No* decision, let's drag and drop **Decision** from **Utilities** to the next step. To find **Decision**, scroll down on the left hand side of the designer page.
+1. On the box to the right, select **is**, and Value **Standard sales order**
 
-    ![relative](images/dropdecision.gif)
+    ![relative](images/standardsoselect.png)
 
-1. Rename **Always** by clicking it, and go to the right hand side **Prompt properties** to change **Always** to **Yes**.
+1. See if you can fill in the rest according to the matrix below (You have just completed the first row)
 
-    ![relative](images/yesdecision.gif)
+![relative](images/approvalsmatrix.png)
 
-1. Click **Add Condition**, and change the condition to the following:
+29. Your screen should look like the following once complete
 
-    **[Confirm Withdrawal][is][Checked]**
+![relative](images/completedecision.png)
 
-    ![relative](images/confirmwithdrawalcheck.png)
+30. Click **Save** on the top right
 
-    Click **Save**.
 
-1. Drag and drop a **User Input Text** on **Yes**.
-
-    ![relative](images/reasontextdrop.gif)
-
-1. On the right, set the response properties to the following:
-    Field | Value
-    -------------- | --------------
-    Name | Reason for withdrawal
-    Prompt | Why are you withdrawing student from this activity?
-    Acknowledge message | Ok, we will proceed to withdraw student from the activity.
-
-     **Optional**: To give more context, it is a good idea to include the student's name and activity name. We did this earlier, and we can include this again here for **Prompt** and **Acknowledge message** as follows:
-
-    Field | Value
-    -------------- | --------------
-     Name | Reason for withdrawal
-    Prompt | Why are you withdrawing **\[Input variables-\> Choose An Activity-\> Student-\> Name\]** from this activity?
-  
-    ![relative](images/inputprompt.png)
-    Field | Value
-    -------------- | --------------
-    Acknowledge message | Ok, we will proceed to withdraw **\[Input variables-\> Choose An Activity-\> Student-\> Name\]** from **\[Input variables-\> Choose An Activity-\> Activity-\> Activity\]**.
-
-    ![relative](images/acknowledgemessage.png)
-
-1. Drag and drop **Record Action** under **Utilities** between **Reason for withdrawal** and **End**.
-
-    ![relative](images/recordactiondrop.gif)
-
-1. Set the **Prompt properties** as follows:
-
-    Field | Value
-    -------------- | --------------
-    Name |   Update Permission Task to withdrawn
-    Action type | Update Record
-    Record  |   Choose An Activity
-
-    Click **Add Field**, and in the **Field Values** pop-up window, add the following field values:
-
-    * State: **Withdrawn**
-
-    * Work notes: **Input variables-\> Reason For Withdrawal**
-
-    ![relative](images/updatepermtask.gif)
-
-    Click **Save**.
-
-1. The **Prompt Properties** panel should look like this:
-
-    ![relative](images/updaterecordpromptproperties.png)
-
-1. Click on the Blue **+** button under the **Decision** button. Another branch appears.
-
-    ![relative](images/splitblue.gif)
-
-1. Rename **Always** on the left by clicking on it. In the **Prompt properties**, change **Always** to **No**.
-
-1. Click **Add condition**, and set the condition to the following:
-
-    **\[Confirm Withdrawal\] \[is\] \[Unchecked\]**
-
-    ![relative](images/nowithdrawal.png)
-
-1. Click **Save**.
-
-1. Click the **Fit Content to Window** button on the top right of the diagram to see the topic in it's entirety. Drag the
-*arrow* below **No** to connect to the node **Choose an
-activity**.
-
-    ![relative](images/nooption.gif)
-
-    > HINT: Click and drag the **arrowhead** and NOT the dot.
-
-    ![relative](images/arrowhead.png)
-
-1. Click **Save** on the top right corner.
-
-1. Now you've finished building the whole topic flow, let's preview what we just built by clicking **Test**.
-
-## Preview
-
-1. In the pop-up conversation, select one of the *assigned activities*.
-
-    ![relative](images/testtop1.png)
-
-1. Select any one of the activities and select **No** when asked if you would like to withdraw from the activity.
-
-    ![relative](images/testtop2.png)
-
-1. Try selecting another activity from the list.
-
-1. This time, select **Yes**, and then enter a reason for withdrawal.
-
-    ![relative](images/testtop3.png)
-
-1. This will change the state of the permission task from **Approved** to **Withdrawn** and enter the *parent's comments* in the worknotes. If you want to verify these changes, **DO NOT close the window**.
-
-1. Congratulations! You've successfully created a topic in Virtual Agent.
-
-## Validation
-
-1. Scroll up in the conversation.
-
-1. Under the *Activity card*, click the **activity name** on the top right of the card.
-
-    ![relative](images/testveri1.png)
-
-    A new browser tab opens showing the **Activity** record (this is opening because we looked up the *activity record* earlier in the exercise).
-
-1. Click **Permission Tasks** under **Related Links**.
-
-    ![relative](images/testveri2.png)
-
-    The *Permission Tasks* page is displayed.
-
-1. Click the **Permission Task** on the left to open the **Permission Task** record.
-
-1. Confirm that the state is **Withdrawn**, and the reason for withdrawal is populated in the **Activity**.
-
-    ![relative](images/topveri3.png)
-
-1. Close this tab once you have validated the record.
-
-# Exercise 2: Build your NLU Model
+# Exercise 2: Streamlining the Goods Receipt Process
 
 ## Goal
 
@@ -515,15 +444,17 @@ In this exercise, you will use the NLU Workbench to create, train and test a *NL
 
 Congratulations! You've created a NLU model. We will now use this in the *Withdraw from activity* topic we created in Exercise 1.
 
-# Exercise 3: Implement the NLU model and design the chatbot
+# Exercise 3: Automating Financial Close
 
 ## Goals
 
-* Use *Conversational Interfaces* to change some visual elements of the Virtual Agent interface.
+The financial close is a critical process that happens regularly (Monthly, Quarterly, Yearly) in a business with the general goal of producing financial reports representative of the company's true financial position. This is a stressful exercise and there is typically a checklist of activities that the finance team has to undertake, for example: Perform inventory count, reoncile account and post Journal Entries, update cash flow statements, balance petty cash funds, any many more.
 
-* Activate NLU to make it available in Virtual Agent topics for intent discovery, before we apply the NLU model we created in the previous exercise on our custom Virtual Agent topic.
+Many of these activities also tie back to SAP as the system of record, but this is essentially is a workflow activity, not a record one! Navigating across SAP, updating, checking then reporting then becomes a huge headache. So can we make this better? Obviously!
 
-In the first part of the exercise, we will be making some changes to how the Virtual Agent appears in the *Employee Center* Portal. To do this we need to first change to the *Employee Center Core* scope.
+In this exercise, let's focus on one of the key activites, which is Journal Entry posting from ServiceNow to SAP.
+
+> A journal entry is used to record a business transaction in the accounting records of a business. A journal entry is usually recorded in the general ledger; which is then used to create financial statements for the business.The logic behind a journal entry is to record every business transaction in at least two places (known as double entry accounting).
 
 1. On the top navigation bar, click the **Globe** icon towards the right.
 
