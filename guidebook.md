@@ -305,6 +305,83 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 30. Click **Save** on the top right
 
+## Using approval decision matrix in a flow
+
+1. Navigate back to **App Home**
+
+1. Under *Logic and automation*, click **Add**
+
+1. Click **Flow**
+
+1. Click **Build from scratch**
+
+1. Under **Name**, type **Sales Order Approval Flow**, then click **Continue**
+
+1. Click **Edit this flow**
+
+1. Click on **Add a trigger**, and under *Record*, select **Created**
+
+1. Under *Table*, search and select **SAP Sales Order**
+
+    ![relative](images/socreatedtrigger.png)
+
+1. Click **Done**
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
+1. Click **Flow Logic**, then **Make a decision**
+
+1. Under *Decision Label*, type **SO Approval Matrix**
+
+1. Under **Decision Table*, search for the decision table we just created, **Sales Order Approval Matrix**
+
+1. Drag in the **SAP Sales Order Record** data pill onto **Sales order record**
+
+    ![relative](images/soapprovaldecisionflow.gif)
+
+1. Click **Done**
+
+1. You should now see three branches appear for each *Group* we selected as approvers earlier
+
+> **IMPORTANT** For this lab, we will not spend time building out the approval workflow for each branch. The idea here is that you now have the ability to cater to any speicifc workflow approval pattern using the ServiceNow Core *Ask for Approval* action.
+
+17. Now that you understand we will skip the approval building workflow, click on **+** under the first branch
+
+1. Click **Action**
+
+1. Search for **SAP ERP**, then select **Update Sales Order**
+
+    ![relative](images/updatesoselect.png)
+
+20. Under the **Sales Document** field, drag the **Document number** pill onto the field
+
+21. Change the **Delivery Block** field to **None**
+
+    ![relative](images/addupdateso.gif)
+
+1. Click **Done**
+
+1. On the **Update Sales Order** action you just added, click on the **Duplicate** icon twice
+
+1. Drag each of the 2 duplicated actions under each of the other branches
+
+    ![relative](images/duplicateaction.gif)
+
+1. Click **Save**
+
+1. Click **Activate**
+
+1. Click **Test**, and select the record that was created via the first flow we created, it should be **SAPSO0001001**
+
+    ![relative](images/testdecisionflow.png)
+
+1. Click **Your test has finished running. View the flow execution details**
+
+1. Check the execution flow, did it match our Approval Matrix? Your results will vary based on your record.
+
+    ![relative](images/testdecision.png)
+
+1. If it did not, examine your Decision Builder table again to see if there was anything you missed.
 
 # Exercise 2: Streamlining the Goods Receipt Process
 
