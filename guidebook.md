@@ -40,7 +40,11 @@ In one of our customer's internal landscape, they reported having 54 different w
 ![relative](images/approvalsmatrix.png)
 > The sample that we will work with, but it usually gets a lot more complicated than this ☠️
 
-Thankfully, we have the solution for this, so let's start by showing how you can run these approval matrices on top of the Sales Order documents from SAP.
+Thankfully, we have the solution for this, so let's start by showing how you can run these approval matrices on top of the Sales Order documents from SAP. 
+<br><br>
+For easy reference, this is how the Standard Order (Sales Order) document looks like in SAP ECC. You navigate to this module by entering the T code *VA01*. The T Code (Transaction code) is a 4 digit shortcut key to access a requested transaction, sort of like carrying out an *incident.list* command in the ServiceNow UI.
+
+![relative](images/sapstandardorder.png)
 
 ## Let's start
 
@@ -361,7 +365,10 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Done**
 
-1. On the **Update Sales Order** action you just added, click on the **Duplicate** icon twice
+> For reference, this action will remove the delivery block as you see in the image from SAP ECC below, which will allow the order to move to the next stage, which is generally creating a delivery document. 
+![relative](images/removedeliveryblock.png)
+
+23. On the **Update Sales Order** action you just added, click on the **Duplicate** icon twice
 
 1. Drag each of the 2 duplicated actions under each of the other branches
 
@@ -387,437 +394,96 @@ As you can imagine, now that we have these 2 workflows designed, one will essent
 
 Well done! You've come to the end of Exercise 1, where you've built a very powerful approval matrix alternative that sits on top of any SAP document to drive the Delegation of Authority process. Of course, this is only the very start, and you can start to include platform capabilties such as SLAs, Approval Delegation periods, Conversational integrations, Mobile Approvals and more that makes the entire process seamless.
 
-# Exercise 2: Streamlining the Goods Receipt Process
+# Exercise 2: Automating Financial Close - The Journal Entry experience
 
-## Goal
-
-In this exercise, you will use the NLU Workbench to create, train and test a *NLU model* to be used in the topic created in the previous exercise. The NLU model is built to help the system understand human-expressed intent regarding user requests for access to systems, data, roles, equipment, and other entities. You will use this model to help the system understand the same use case as before (a parent requesting a student withdrawal from an activity).
-
-1. Navigate to **All > NLU Workbench > Models**.
-
-    ![relative](images/nlunav.png)
-
-1. The system displays the *NLU Workbench* page.
-
-1. Close any pop-ups that appear on the screen.
-
-1. Click **Start from blank** on the top right on the screen to create a new model.
-
-    ![relative](images/nluworkbench.png)
-
-1. In the next screen, define the fields as follows:
-
-    Field | Value
-    -------------- | --------------
-    Name | Student activities
-    Short description | Manage different aspects of student activities
-    What is the primary language? (autofilled) | English -en 
-    What are you creating this for? (autofilled) | Virtual Agent
-    What business area is this for? (optional) | *--Not specified--*
-
-    ![relative](images/modeldetails.png)
-
-1. Click **Next**.
-
-1. Click **View Model**.
-
-1. In the pop-up window, Click **Add content**.
-
-    ![relative](images/addcontent.png)
-
-1. Click **New intent**.
-
-    ![relative](images/newintent.png)
-
-1. Define the intent properties as following:
-
-    Field | Value
-    -------------- | --------------
-    Intent Name | Withdraw from activity
-    Description| Withdraw a student from approved activity
-
-    ![relative](images/intentname.png)
-
-1. Click **Add intent**.
-
-1. Provide some *utterance examples*.
-
-    * withdraw from activity
-
-    * cancel student permission
-
-    * deregister student from event
-
-    * student unable to attend activity
-
-    * remove after school program
-
-    For the purpose of this exercise, we are only going to have 5 utterances, but you can always add more to improve accuracy.
-
-    ![relative](images/withdrawintent.png)
-
-    Next, we'll create another intent for this model.
-
-1. Click **Manage your model content** on the top *breadcrumb navigator*.
-
-    ![relative](images/breadcrumb.png)
-
-1. Confirm that **#Withdraw from activity** shows up in the list, then click **New Intent**.
-
-    ![relative](images/2ndintent.png)
-
-1. Define the intent properties as follows:
-
-    Field | Value
-    -------------- | --------------
-    Intent Name | Approve permission task
-    Description| Approve an assigned permission task
-
-    ![relative](images/permtaskdetail.png)
-
-1. Click **Add intent**.
-
-1. Provide 5 utterances:
-
-    * approve permission task
-
-    * grant activity permission
-
-    * view open activities to approve
-
-    * allow student to attend activity
-
-    * give permission for activity
-
-     > A second intent is required as part of a NLU model. However, we will not be using this second intent in our topic for this session.
-
-1. Click **Train model**. (1)
-
-1. In the side bar that appears on the right, click **Train**. (2)
-
-    ![relative](images/approveintent.png)
-
-1. If all above steps are configured correctly, the system displays a message: *The model has been successfully trained*.
-
-    ![relative](images/trainingsuccess.png)
-
-    We can now run a quick test of the model.
-
-1. Click **Try Model**.
-
-1. Enter any phrase related to withdrawing a student from an activity. For example:
-
-         I want to remove student from an activity.
-
-1. Locate **Top Prediction(s)** under the phrase.
-
-1. Verify the *Withdraw from activity* intent is identified with a percentage of confidence.
-
-    ![relative](images/trymodel.gif)
-
-1. (Optional) Try another phrase with the intent of approving a permission task. For example:
-
-        Grant student permission to attend an activity
-
-    The **Top Prediction(s)** should identify as *Approve permission task*.
-
-    ![relative](images/grantpermtry.png)
-
-Congratulations! You've created a NLU model. We will now use this in the *Withdraw from activity* topic we created in Exercise 1.
-
-# Exercise 3: Automating Financial Close
-
-## Goals
+## Introduction
 
 The financial close is a critical process that happens regularly (Monthly, Quarterly, Yearly) in a business with the general goal of producing financial reports representative of the company's true financial position. This is a stressful exercise and there is typically a checklist of activities that the finance team has to undertake, for example: Perform inventory count, reoncile account and post Journal Entries, update cash flow statements, balance petty cash funds, any many more.
 
-Many of these activities also tie back to SAP as the system of record, but this is essentially is a workflow activity, not a record one! Navigating across SAP, updating, checking then reporting then becomes a huge headache. So can we make this better? Obviously!
+Many of these activities also tie back to SAP as the system of record, but this is essentially is a workflow activity, not a record centric one! Navigating across SAP, updating, checking then reporting then becomes a huge headache. In fact, in a 2021 SAPinsider report, 58% of organizations see financial close as the biggest pain point for financial processing, and only 30% of organizations have implemented solutions to automate the SAP financial close process, far below areas such as Account Receivable or Accounts Payable. So can we make this better? Obviously!
 
 In this exercise, let's focus on one of the key activites, which is Journal Entry posting from ServiceNow to SAP.
 
-> A journal entry is used to record a business transaction in the accounting records of a business. A journal entry is usually recorded in the general ledger; which is then used to create financial statements for the business.The logic behind a journal entry is to record every business transaction in at least two places (known as double entry accounting).
+> A journal entry is used to record a business transaction in the accounting records of a business. A journal entry is usually recorded in the general ledger; which is then used to create financial statements for the business.The logic behind a journal entry is to record every business transaction in at least two places (known as double entry accounting). <br> In the following diagram, you can se that posting journal entries in the general ledger is among the first tasks in the financial close process. Not on finance users, but sometimes business users as well have to post hundreds or thousand of manual journal entries in each period! <br>
+![relative](images/fcprocess.png)
 
-1. On the top navigation bar, click the **Globe** icon towards the right.
+Since you've already gone through the excercise of creating a new app and tables and forms, the setup of these application files for this exercise is already done for you.
 
-1. Click **Application scope: Student Permission** under the drop down.
+1. Navigate back to *App Engine Studio Home* by clicking on the **Home** icon
 
-1. In the list that appears, select **Employee Center Core**.
+1. Under *My recent apps*, look for **Exercise 2: Financial Close ...**. If not found, click on **See all of my apps**, then search for **Exercise 2**
 
-    ![relative](images/globalscope.gif)
+    ![relative](images/openex2.png)
 
-    The system automatically refreshes the screen.
+1. Under *Data*, you can see 2 tables added in this application: **Journal Entry Document** and **Journal Entry Lines**
 
-## Applying Virtual Agent brand elements
+1. First, let's see what a Journal Entry Document looks like in SAP
 
-1. Navigate to **All > Conversational Interfaces > Home**.
+    ![relative](images/sapje.png)
 
-    ![relative](images/conversationalhome.png)
+1. Now let's see how this works with our two related tables. Similar? You could have built this in App Engine Studio in less than 10 minutes ;)
 
-    The system opens a new browser tab for the *Conversational Interfaces Home*. All the settings and configurations you need to set up and launch your interfaces, such as *Virtual Agent* and *Agent Chat*, are found here.
+    ![relative](images/snje.png)
 
-1. Spend a few moments to get acquainted with the page, then click the **Chat Settings** tab on the top of the page.
+## Building the user experience layer
 
-    ![relative](images/chatsettings.png)
+For this part of the exercise, we will get our hands a little dirtier in building the Record Producer for a user to enter the Journal Entry record. As we now need to enable the user to attach a dynamic number of Journal Entry Lines against a parent Journal Entry Document, there is some scripting needed as part of implementing this feature via a Multi-row Variable Set.
 
-1. On the *Branding* block, Click **View all**.
+>**What is a Multi-row Variable Set (MVRS)?** <br>
+From ServiceNow documentation: Use a multi-row variable set (MRVS) to capture variable data in a grid layout while submitting a catalog item request for a group of entities. For example, for HR during the reorganization of employees, a single record producer should be able to capture the relevant information such as the department and manager for a group of employees
 
-    ![relative](images/brandingselect.png)
+First, let's create the variable set. This time, for this part, we will be working within studio IDE, but don't close your App Engine Studio interface just yet.
 
-1. In the *Branding* list, click **EC Branding**.
+1. In a new tab, go back to the main ServiceNow Polaris UI, and search for **Studio** under *All*, and click on it
+   
+    ![relative](images/studioide.png)
 
-1. Change **Chat Header** to **Parent Support**.
+1. Studio should open in a new browser tab, and on the modal on screen, your should be able to see **Exercise 2: Financial Close Automation** on the list, click on it
 
-1. Save the following image to your local drive. (Right-click -> Save Image As...)
+    ![relative](images/studiofca.png)
 
-    ![relative](images/va-avatar.png)
+1. Click **Create Application File** on the top left
 
-1. Under *Chat Header Logo*, Click the **Trash Bin icon**, and in the **Delete image** pop-up, select **Delete**.
+1. Search **Variable Set**, then click the **Create** button on the bottom right
 
-    ![relative](images/deleteheaderlogo.png)
+    ![relative](images/createvariableset.png)
 
-1. Click **Attach image**, then upload the file you just downloaded.
+1. Click **Multi-Row Variable Set**
 
-1. Click **Save** on the top right, and your screen should look like the following. If it does not, refresh the browser window.
+    ![relative](images/selectmvrs.png)
 
-    ![relative](images/ecbrandingfin.png)
+1. On the **Variable Set** form, fill in the Title as **Journal Entry**, then click out of the field. The **Internal name** should be automatically populated as **journal_entry**. Leave it as such.
 
-## Turning on NLU
+1. Click **Submit**
 
-1. On the left navigation bar, select **Virtual Agent**. The screen should now display **Virtual Agent Settings**. (1)
+    ![relative](images/variablesetform.png)
 
-    Notice how under the *Natural Language Understanding (NLU)* block, **Status** is set to **Off**.
+1. On the left panel, scroll down until you see **Service Catalog > Variable Sets > Journal Entry**
 
-1. Click **View settings**. (2)
+1. Click on **Journal Entry**
 
-    ![relative](images/vasettings.png)
+1. On the Variable Set, you should now see more related lists below. 
 
-1. Under the *NLU Service Provider* dropdown, select **ServiceNow NLU**. (1)
+1. Under **Variables**, click **New**
 
-1. Leave the two options below **off**.
+1. On the new **Variable** screen, enter **100** under *Order*
 
-1. Toggle the **Activate** switch on the top right of the screen. (2)
+1. Under the **Question** tab, enter **GL Account** under *Question*
 
-    Your screen should now look like the following:
+    ![relative](images/glaccountvariable.png)
 
-    ![relative](images/nluactivate.png)
+1. Click **Submit**
 
-1. Click **Save**. (3)
+1. Create 3 more variables under the **Journal Entry** Variable Set
 
-## Applying NLU on Withdraw from activity topic
+    Order | Question
+    ------------ | -------------
+    200 | Cost center
+    300 | Debit
+    400 | Credit
 
-1. Navigate back to the main *ServiceNow UI* browser tab.
+1. Your Variable Set should now look like this
 
-1. Using the same method as before, change the application scope back to **Student Permission**.
+    ![relative](images/completemvrs.png)
 
-    ![relative](images/stupermscope.gif)
-
-1. Navigate to **All > Conversational Interfaces > Virtual Agent > Designer**.
-
-    ![relative](images/menu-vadesigner.png)
-
-1. Scroll down and click the **Withdraw from activity** topic card.
-
-    ![relative](images/openwithdrawactivity.png)
-
-1. Click **Properties** on the top left.
-
-    ![relative](images/vaprop.png)
-
-1. In the section *Set up Natural Language Understanding (NLU)*, set the following in the respective order:
-
-    Field | Value
-    -------------- | --------------
-    NLU Model |   Student activities (English)
-    Associated Intent | Withdraw from activity
-
-    ![relative](images/setupnlu.gif)
-
-    > The NLU model will now be used for topic discovery/identification in place of the keywords that you entered before.
-
-1. Click **Save**.
-
-1. Click **Test**.
-
-    The system displays a checkbox that allows you to *Include topic discovery*.
-
-1. Enter a statement in the chat of your choice with the objective of withdrawing from an activity. For example:
-
-        I would like to withdraw my child from an activity.
-
-    ![relative](images/nlutestphrase.png)
-
-1. Verify that the test phrase has been analyzed and the *Intent* has been invoked.
-
-1. You can continue testing more phrases by clicking the **refresh icon** on the top bar.
-
-    ![relative](images/refreshdiscovery.gif)
-
-1. Close the pop-up window.
-
-    Now that we have verified that the NLU Model works, the next step is to publish it along with the topic.
-
-1. Click the **NLU Intent tab**. (1)
-
-1. Click **Publish Model**. (2)
-
-1. On the right sidebar that now appears, Click **Publish**. (3)
-
-1. In the pop-up, Click **Publish**. (4)
-
-1. Click **Publish** on the top right.
-
-    ![relative](images/publishtopic.png)
-
-1. Confirm that the topic is **Active**.
-
-    ![relative](images/activetrue.png) 
-
-Congratulations! Your topic is now Active and ready to be used in Virtual Agent conversations.
-
-# Exercise 4: Testing the topic in Employee Center
-
-## Goal
-
-In this final exercise, we will test our published Virtual Agent topic in *Employee Center*, and will also review the design changes we made to the Virtual Agent.
-
-The first step is to *impersonate* a Parent.
-
-1. Click the **Profile avatar** on the top right of the screen.
-
-1. Select **Impersonate user** under the list of options.
-
-1. In the pop-up, search for user **Fred Luddy**.
-
-    ![relative](images/impersonatebeth.gif)
-
-1. Navigate to **All > Self Service > Employee Center**.
-
-    The system opens *Employee Center* in a new browser window.
-
-    ![relative](images/openec.png)
-
-1. Click the **Chat bubble** at the bottom right of the screen to open Virtual Agent.
-
-    ![relative](images/ecpage.png)
-
-1. Confirm the visual changes that you made are reflected in the conversation window.
-
-    ![relative](images/startconvo.png)
-
-1. Type in a request related to withdrawing a student from an activity. For example:
-
-         I want to withdraw student from an activity
-
-1. Choose any of the activities to withdraw from, and complete the rest of the conversation.
-
-    ![relative](images/jeanfrench.png)
-
-1. Trigger the topic one final time by clicking on **Click here to start a new conversation**.
-
-1. Ensure that the activity you just withdrew from does not show up on the list any longer.
-
-    > You should only have one Activity Permission Task left to choose from. The message shown would be as follows:
-
-    ![relative](images/finalactivity.png)
-
-Congratulations you have completed the entire lab!
-
-# Bonus Exercise: Enhance NLU accuracy by adding vocabulary
-
-## Goal
-
-Increase the accuracy of the NLU model that we built by using vocabulary to provide synonyms to the keywords in our topic.
-
-1. Click the **Profile avatar** on the top right of the screen.
-
-1. Click **End impersonation**
-
-    ![relative](images/endimpersonation.png)
-
-1. Navigate to **All > NLU Workbench > Models**.
-
-    ![relative](images/nlunav.png)
-
-1. Open your *Student activities* model by clicking **English** next to **Student activities**.
-
-    ![relative](images/addvocab1.png)
-
-1. On the *Student activities* model page, click the **Vocabulary** box title to be brough to the *Vocabulary* screen.
-
-    ![relative](images/clickvocab.png)
-
-1. Click **Add synonym**.
-
-    ![relative](images/addsyno.png)
-
-1. In the **Add Synonym** pop up box, fill in the details as follows:
-
-    Field | Value
-    -------------- | --------------
-    Type |   Regular
-    Vocabulary | Student
-    Synonym |  (press *enter* after each synonym to add) *child, ward, pupil, son, daughter, kid*
-
-    Once completed, it should look like this:
-
-    ![relative](images/studentsyno.png)
-
-1. Click **Save**.
-
-    Let's add another synonym for *activity*.
-
-1. Click **Add synonym**.
-
-1. In the **Add Synonym** pop up box, fill in the details as follows:
-
-    Field | Value
-    -------------- | --------------
-    Type |   Regular
-    Vocabulary | Activity
-    Synonym |  (press *enter* after each synonym to add) *course, afterschool, program, extra-curricular, event, field trip, visit*
-
-    Once completed, it should look like this:
-
-    ![relative](images/activitysyno.png)
-
-1. Click **Save**.
-
-    Before re-training the model, let's first test an utterance to see the current intent prediction percentage.
-
-1. Click **Try model** on the top right, and in the search field, enter the phrase:
-
-        Withdraw my daughter from upcoming field trip
-
-1. Click **Go**.
-
-    ![relative](images/beforetest.gif)
-
-    > This utternace is predicting the topic correctly, but only at a 68% confidence level.
-
-1. Take note of the percentage value for the intent.
-
-1. Click **Train model**.
-
-    ![relative](images/trainmodeltab.png)
-
-1. Click **Train**.
-
-    Once training has been complete, you should see a success message:
-
-    ![relative](images/trainingsuccessnew.png)
-
-    Repeat the previous steps.
-
-1. Click **Try model** on the top right, and in the search field, enter the phrase:
-
-        Withdraw my daughter from upcoming field trip
-
-1. Click **Go**.
-
-1. Take note of the prediction percentage now, it should be higher than your first try.
-
-    ![relative](images/testutterance2.png)
-
-    > The confidence level is now 77% versus 68% before.
-
-Well done! We have now made the Virtual Agent more accurate in topic identification, giving users and even better experience in getting their requests and queries resolved. Feel free to add even more synonyms to improve accuracy of your NLU model, or try out other phrases.
+1. 
