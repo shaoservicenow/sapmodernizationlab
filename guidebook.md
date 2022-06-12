@@ -383,6 +383,10 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. If it did not, examine your Decision Builder table again to see if there was anything you missed.
 
+As you can imagine, now that we have these 2 workflows designed, one will essentially trigger off the other: Our custom app will pull Sales Orders from SAP every 2 hours, and for any new Sales Orders picked up, it will be processed via our Decision Table, before routing to the right parties for Approval. Only after approval, will we then update the same Sales Order back in SAP (to remove the delivery block).
+
+Well done! You've come to the end of Exercise 1, where you've built a very powerful approval matrix alternative that sits on top of any SAP document to drive the Delegation of Authority process. Of course, this is only the very start, and you can start to include platform capabilties such as SLAs, Approval Delegation periods, Conversational integrations, Mobile Approvals and more that makes the entire process seamless.
+
 # Exercise 2: Streamlining the Goods Receipt Process
 
 ## Goal
