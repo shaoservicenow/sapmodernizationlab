@@ -2,7 +2,9 @@
 
 ## Goal
 
-In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform.
+In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform. Be prepared, there are no-code elements, as well as some basic scripting requirements in this lab, but not to worry, I'll be here to guide you through the process.
+
+You'll learn how the platform can be a catch-all for everything above SAP as a system of engagement and to fuel ERP modernization.
 
 ## Background
 
@@ -421,6 +423,8 @@ Since you've already gone through the excercise of creating a new app and tables
 
     ![relative](images/sapje.png)
 
+    >The Journal Entry Document in our scenario refers to the "Document Header", and Journal Entry Lines are row items nested under the Document Header.
+
 1. Now let's see how this works with our two related tables. Similar? You could have built this in App Engine Studio in less than 10 minutes ;)
 
     ![relative](images/snje.png)
@@ -486,4 +490,284 @@ First, let's create the variable set. This time, for this part, we will be worki
 
     ![relative](images/completemvrs.png)
 
-1. 
+### Creating a Record Producer
+
+Now that we have the variable set to capture Journal Entry Lines, let's use this in a new Record Producer
+
+> We will do this section in Studio IDE for easier access.
+
+1. Click **Create Application File**, then search for and create **Record Producer**
+
+1. In the **Record Producer** screen, fill in the form as follows
+
+    Field | Entry
+    ------------ | -------------
+    Name | Post Journal Entry
+    Table name | Journal Entry Document
+    Script (Scroll down) | Paste the script below
+
+    ```
+    (function() {
+
+	var mrvs = producer.journal_entry;
+
+	var l = mrvs.getRowCount();
+	for(var i = 0; i < l; i++) {
+		var row = mrvs.getRow(i);
+		var cells = row.getCells();
+
+		var journaldocument = new GlideRecord('x_snc_exercise_2_0_journal_entry_line');
+		journaldocument.initialize();
+		journaldocument.setValue('journal_entry_document', current.getUniqueValue());
+		journaldocument.setValue('gl_account', cells[0]);
+		journaldocument.setValue('cost_center', cells[1]);
+                journaldocument.setValue('debit', cells[2]);
+                journaldocument.setValue('credit', cells[3]);
+		journaldocument.insert();
+	}
+
+    })();
+    ```
+
+3. Right click on the form header and click **Save**
+
+    ![relative](images/postjerp.gif)
+
+1. Scroll down to the **Variables** tab and click **New**
+
+1. Fill in the form as follows
+
+    Field | Entry
+    ------------ | -------------
+    Map to field | **Checked**
+    Order | 100
+    Field | Company code
+    Question | Company code    
+
+    ![relative](images/companycodevariable.gif)
+
+    > We will only work on this one variable for the sake of time, but you could fill out the rest of the fields if you feel necessary. (*Fiscal year, Posting date*)
+
+1. Navigate back to the **Post Journal Entry** Record Producer tab
+
+1. Click the **Variable Sets** tab
+
+1. Click **Edit...**
+
+1. On the **Edit Members** screen, move **Journal Entry** to the right column, then click **Save**
+
+    ![relative](images/shiftvs.png)
+
+1. Back on the Record Producer screen, click the **Accessibility** tab, then add **Service Catalog**, and category **Can We Help You?**
+
+    ![relative](images/addtocatalog.gif)
+
+1. Right click the form header and click **Save**
+
+1. We can now test our Record Producer. Click **Try It**
+
+    ![relative](images/tryit.png)
+
+1. For *Company Code*, enter **1002**
+
+1. Click **Add**
+
+1. On the pop-up modal, enter the following details
+
+    Field | Entry
+    ------------ | -------------
+    GL Account | 622210
+    Cost center | 10001000
+    Debit | 8000
+    Credit | 0 
+
+    ![relative](images/addrow.png)
+
+1. Click **Add**
+
+1. Click **Add** once again for a new Journal Entry
+
+1. This time, enter these details
+
+    Field | Entry
+    ------------ | -------------
+    GL Account | **622250**
+    Cost center | 10001000
+    Debit | 0
+    Credit | 8000
+
+1. Click **Add**
+
+1. Your screen should now look like the following
+
+    ![relative](images/filled1002.png)
+
+1. Click **Submit**
+
+1. Your screen should now show the submitted record. Ensure that the *Company code* is captured, and you have the two Journal Entry Lines under the related table
+
+    ![relative](images/submittedrp.png)
+
+Congratulations! You have now built the front end user experience to capture Journal Entries, and this record producer can be added to any catalog on any portal. It can even be used on the mobile app. Obviously, this is only one approach, and in reality, some of our customers still prefer to have everything entered via an excel template, which is uploaded against the record producer/catalog item before being processed through an import set.
+
+I personally prefer the MVRS approach as there is little room for error. You can also build validation logic in directly via a client script or business rule.
+
+## Integrating to SAP
+
+Now that we can capture this data, let's close off the process by building the integration to SAP
+
+1. Navigate back to the App Engine Studio interface, if you have closed it before, open the **Exercise 2: Financial Close Automation** app
+
+1. Under *Logic and automation*, click **Add**
+
+1. Click **Flow**
+
+1. Click **Build from scratch**
+
+1. Under *Name*, enter **Post Journal Entry to SAP**
+
+1. Click **Continue**
+
+1. Click **Edit this flow**
+
+1. Click **Add a trigger**
+
+1. Under **Record**, select **Created**
+
+1. Under **Table**, search and select **Journal Entry Document**
+
+    ![relative](images/jetriggercreated.png)
+
+1. Click **Done**
+
+1. Under **Actions**, click **Add an Action, Flow Logic, or Subflow**
+
+1. Click **Action**
+
+1. Search for **sap erp**, then select **Post Journal Entry**
+
+    ![relative](images/selectpostje.png)
+
+1. Map the data pills for each of **1. Company code, 2. Fiscal year** and **3. Posting date** from the **Trigger - Record Created** step Record to the corresponding fields in the action
+
+    ![relative](images/mappillspostje.png)
+
+1. However, notice that for the **Journal Entry Lines** field, it only accepts **array.object** type pills. Recall how we structured our table earlier, there are multiple Journal Entry Lines against one Journal Entry Document. What we need to do here is get all the Journal Entry Lines linked to this trigger record.
+
+1. Fortunately, the action to convert a list of records into an array object has already been configured for you.
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
+1. Click **Action**
+
+1. Search **Get Journal Entry Lines**, and select the one action under the Exercise 2 spoke
+
+1. On the right of the action, open the Action by clicking on the **Open Action in Action Designer icon**
+
+1. Work through the different action steps here to understand what is being done
+
+    ![relative](images/openaction.gif)
+
+    > This action takes the input of the Journal Entry Document, then finds all related Journal Entry Lines associated with the Journal Entry Document and converts each record to an Array.Object
+
+1. Navigate back to the Flow
+
+1. Drag the **Journal Entry Document Record** data pill onto the **Journal Entry Document** field under *Get Journal Entry Lines*
+
+1. Move this action before the **Post Journal Entry** action so that we have access to the **Journal Entry Lines Array.Object** to pass into the **Post Journal Entry** action
+
+1. Click the **Post Journal Entry** action
+
+1. Drag the **Journal Entry Lines Array.Object** onto **Journal Entry Lines**
+
+    ![relative](images/shiftactions.gif)
+
+1. Click **Done**
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
+1. Click **Action**, then under **ServiceNow Core**, search and select the **Update Record** action
+
+1. For *Record*, drag in the **Journal Entry Document Record** data pill
+
+1. Click **Add field value**
+
+1. Select **Document number**, and under *2 - Post Journal Entry*, drag in the **Journal Entry Document Number** data pill
+
+    ![relative](images/updatejeaction.gif)
+
+1. Click **Activate** on the top right of the screen
+
+## Testing the experience and flow
+
+1. Navigate back to the ServiceNow Polaris UI, and search for **Service Portal** under *All*
+
+1. Click **Service Portal Home**, and it will open in a new browser tab
+
+    ![relative](images/serviceportal.png)
+
+1. Under the search bar, enter **post journal entry**, then hit search
+
+1. Click **Request**
+
+    ![relative](images/requestje.png)
+
+1. This was the record producer you created earlier.
+
+1. Enter **1003** for Company code
+
+1. Click **Add**, then enter the following
+
+    Field | Entry
+    ------------ | -------------
+    GL Account | 622210
+    Cost center | 10001000
+    Debit | 8000
+    Credit | 0 
+
+    ![relative](images/addrow.png)
+
+1. Click **Add**
+
+1. Click **Add** once again for a new Journal Entry
+
+1. This time, enter these details
+
+    Field | Entry
+    ------------ | -------------
+    GL Account | **622250**
+    Cost center | 10001000
+    Debit | 0
+    Credit | 8000
+
+    ![relative](images/sppostje.png)
+
+1. Click **Submit**
+
+1. Go back to App Engine Studio, with the **Post Journal Entry to SAP** flow open
+
+1. On the top right, click on **more** then click **Executions**
+
+    ![relative](images/clickexecutions.png)
+
+1. You should now see one execution record, click it
+
+    ![relative](images/executionrecord.png)
+
+1. Confirm that the workflow was executed successfully, then click **Update Record** to expand it
+
+1. Click the **Record** number, and confirm that the **Document number** field is now populated
+
+1. This is the document number you can use to identify the Journal Entry Document in SAP
+
+    ![relative](images/reviewrecord.png)
+
+1. For your reference, the Journal Entry Document will show up as such in SAP
+
+    ![relative](images/sapje.png)
+
+## Summary
+
+Congratulations on completing this lab! You've built 2 apps that will help Modernize SAP. One for automating approvals on any object from SAP, and another for assisting in the Financial Close process by giving users a better experience when posting Journal Entries. Just these alone will tremendously alleviate a great amount of manual effort that was previously done through SAP + multiple channels.
+
+There are obviously so many more areas we can help with, from P2P to OTC, shifting customizations out of SAP is the number 1 priority for many customers, and ServiceNow Creator Workflows allows you to do that all on our industry leading Low-code Application Development Platform.
