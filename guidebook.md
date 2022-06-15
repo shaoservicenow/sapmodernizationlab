@@ -112,7 +112,7 @@ We will now create a table to store Sales Order document data from SAP.
 
     ![relative](images/addedfields.png)
 
-1. Drag the 3 fields you created from the left panel onto the form. Your screen should look like this:
+1. Drag the 5 fields you created (Document number, Document type, Amount, Sales organization, Status) from the left panel onto the form. Your screen should look like this:
 
     ![relative](images/formedit.gif)
 
@@ -144,7 +144,7 @@ Great, you now have a simple table to store Sales Order data via the SAP integra
 
 1. Under the *Date* section, click **Repeat**
 
-1. Change the repeat duration to 2 hours
+1. Change the repeat duration to 1 hour
 
     ![relative](images/2hourtrigger.gif)
 
@@ -494,7 +494,7 @@ First, let's create the variable set. This time, for this part, we will be worki
 
 Now that we have the variable set to capture Journal Entry Lines, let's use this in a new Record Producer
 
-> We will do this section in Studio IDE for easier access.
+> We will do this section in ServiceNow Studio IDE for quicker access, but you could definitely use catalog builder as well.
 
 1. Click **Create Application File**, then search for and create **Record Producer**
 
@@ -504,7 +504,7 @@ Now that we have the variable set to capture Journal Entry Lines, let's use this
     ------------ | -------------
     Name | Post Journal Entry
     Table name | Journal Entry Document
-    Script (Scroll down) | Paste the script below
+    Script (Scroll down) | Copy and paste the script below
 
     ```
     (function() {
@@ -698,6 +698,9 @@ Now that we can capture this data, let's close off the process by building the i
 
 1. Click **Activate** on the top right of the screen
 
+    > **What are we missing here?**<br>
+    Once again we are skipping the approvals that has to happen before a Journal Entry actually gets posted into SAP in the interest of time. There are also often many validation rules for different Journal Entry types (Intercompany Posting, Asset Depreciation Posting, etc.) that we are not configuring in this exercise. Here is a common workflow that you will see across this Journal Entry posting process: <br>![relative](images/jeprocess.png) <br> The method used (Excel template) is slightly different but the overall approach is the same.
+
 ## Testing the experience and flow
 
 1. Navigate back to the ServiceNow Polaris UI, and search for **Service Portal** under *All*
@@ -708,7 +711,7 @@ Now that we can capture this data, let's close off the process by building the i
 
 1. Under the search bar, enter **post journal entry**, then hit search
 
-1. Click **Request**
+1. Click **Post Journal Entry**
 
     ![relative](images/requestje.png)
 
@@ -767,6 +770,8 @@ Now that we can capture this data, let's close off the process by building the i
     ![relative](images/sapje.png)
 
 ## Summary
+
+![relative](images/celebrate-happy.gif)
 
 Congratulations on completing this lab! You've built 2 apps that will help Modernize SAP. One for automating approvals on any object from SAP, and another for assisting in the Financial Close process by giving users a better experience when posting Journal Entries. Just these alone will tremendously alleviate a great amount of manual effort that was previously done through SAP + multiple channels.
 
