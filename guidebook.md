@@ -132,7 +132,7 @@ Great, you now have a simple table to store Sales Order data via the SAP integra
 
 1. Click **Build from scratch**
 
-1. Under **Name**, enter "Get Sales Orders from SAP every hour"
+1. Under **Name**, enter "Get Sales Orders from SAP every 2 hours"
 
 1. Click **Continue**
 
@@ -144,7 +144,7 @@ Great, you now have a simple table to store Sales Order data via the SAP integra
 
 1. Under the *Date* section, click **Repeat**
 
-1. Change the repeat duration to 1 hour
+1. Change the repeat duration to 2 hours
 
     ![relative](images/2hourtrigger.gif)
 
@@ -197,6 +197,12 @@ Let's break down what these mean:
 1. Repeat the above 2 steps for **Amount, Document type** and **Sales organization**
 
     ![relative](images/createrecordfields.gif)
+
+1. Add one final field **Status** and set the value to **New**
+
+1. Your entire action should look like this
+
+    ![relative](images/completedaction.png)
 
 1. Click **Save** on the top right of the screen.
 
@@ -335,6 +341,22 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Add an Action, Flow Logic, or Subflow**
 
+1. Click **Action**, then select **Update Record** under **ServiceNow Core**
+
+    ![relative](images/updaterecordaction.png)
+
+1. Drag the **SAP Sales Order Record** from the Trigger step onto the **Record** field
+
+1. Click **Add field value**
+
+1. Set field to **Status** and select **Approval triggered**
+
+    ![relative](images/approvaltriggered.png)
+
+1. Click **Done**
+
+1. Click **Add an Action, Flow Logic, or Subflow**
+
 1. Click **Flow Logic**, then **Make a decision**
 
 1. Under *Decision Label*, type **SO Approval Matrix**
@@ -351,7 +373,9 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 > **IMPORTANT** For this lab, we will not spend time building out the approval workflow for each branch. The idea here is that you now have the ability to cater to any speicifc workflow approval pattern using the ServiceNow Core *Ask for Approval* action.
 
-17. Now that you understand we will skip the approval building workflow, click on **+** under the first branch
+23. Now that you understand we will skip the approval building workflow, let's move on to post approval. 
+
+1. Click on **+** under the first branch
 
 1. Click **Action**
 
@@ -375,6 +399,22 @@ For this part of the exercise, we will rebuild this following approval matrix
 1. Drag each of the 2 duplicated actions under each of the other branches
 
     ![relative](images/duplicateaction.gif)
+
+1. Under the *Update Sales Order* action, add a new **Action**
+
+1. Select **Update Record** under **ServiceNow Core**
+
+1. Drag the **SAP Sales Order Record** onto the **Record** field
+
+1. Add a field, select **Status** and select **Updated SAP**
+
+1. Click **Done**
+
+1. On the **Update SAP Sales Order Record** action you just added, click on the **Duplicate** icon twice
+
+1. Drag each of the 2 duplicated actions under each of the other branches
+
+    ![relative](images/updatedsapsorec.gif)
 
 1. Click **Save**
 
@@ -467,6 +507,8 @@ First, let's create the variable set. This time, for this part, we will be worki
 1. Click on **Journal Entry**
 
 1. On the Variable Set, you should now see more related lists below. 
+
+    > **NOTE:** It is important you follow the next few steps accurately, if not there might be some problems in the later part of this lab.
 
 1. Under **Variables**, click **New**
 
