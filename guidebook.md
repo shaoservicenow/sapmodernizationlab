@@ -80,7 +80,13 @@ We will now create a table to store Sales Order document data from SAP.
 
 1. Click **Get started**
 
-1. On the *Add Data* page, click **Create from scratch**
+1. On the *Add Data* page, click **Create from an existing table**
+
+1. On the next page, search and select **Task**
+
+    ![relative](images/selecttask.png)
+
+1. Click **Continue**
 
 1. For Table label, enter **SAP Sales Order**. Table name should be auto-populated.
 
@@ -96,6 +102,8 @@ We will now create a table to store Sales Order document data from SAP.
 
     ![relative](images/tabacl.png)
 
+1. Click **Edit table**
+
 1. Close the pop-up dialog
 
 1. You should now be on tha *Table Builder* interface. Click **Add new field**, and add the following fields:
@@ -108,13 +116,43 @@ We will now create a table to store Sales Order document data from SAP.
     Sales organization | String 
     Status | Choice (Dropdown with --None--) : New, Approval triggered, Approved, Rejected, Updated SAP
 
-1. Click **Save**, your screen should look like this, then click **Form views**
+1. Your screen should look like this
 
     ![relative](images/addedfields.png)
 
-1. Drag the 5 fields you created (Document number, Document type, Amount, Sales organization, Status) from the left panel onto the form. Your screen should look like this:
+1. Click **Save**
+
+1. Click **Form views** on the top of the screen
+
+    ![relative](images/formviewsselect.png)
+
+1. Click the **Default view** dropdown
+
+1. Click **+ Create**
+
+1. Enter **Sales order view**
+
+    ![relative](images/soview.png)
+
+1. Click **Create**
+
+1. Rename the section to **Sales Order** by clicking on the section and editing the **Section label** on the right panel
+
+    ![relative](images/renamesalesorder.png)
+
+1. Drag the following fields onto the form:
+    1. Number
+    1. Status
+    1. Document number
+    1. Document type
+    1. Amount
+    1. Sales organization
 
     ![relative](images/formedit.gif)
+
+1. Your completed view should look like this
+
+    ![relative](images/completedsoview.png)
 
 1. Click **Save**
 
@@ -220,11 +258,25 @@ Let's break down what these mean:
 
     ![relative](images/execution1.png)
 
-1. In the pop-up box, click **Open Record**, it should open in a new browser tab, ensure that all the fields are populated. (Your output will be different)
+1. In the pop-up box, click **Open Record**, it should open in a new browser tab.
+
+1. Click on the Hamburger icon on the top left, and under **View**, select **Sales order view**
+
+1. Ensure that all the fields are populated. (Your output will be different)
 
     ![relative](images/previewrecord1.png)
 
-Congrats! You have built the integration to get Sales Order data from SAP. Go back to the previous browser tab, but don't close anything yet.
+1. Click on the Hamburger icon again
+
+1. Under **Configure**, click **Related Lists**
+
+1. Search for **Approvers**, and shift that into the **Selected** column
+
+    ![relative](images/addapproversrelateditem.png)
+
+1. Click **Save**
+
+Congrats! You have built the table to store Sales Order data from SAP. Any approvals that you trigger later can also be seen on this view. Go back to the previous browser tab, but don't close anything yet.
 
 ## Building the approval matrix using decision builder
 
@@ -245,7 +297,7 @@ For this part of the exercise, we will rebuild this following approval matrix
 1. Under Name, enter **Sales Order Approval Matrix**
 
     ![relative](images/namedecision.png)
-> If you face an issue with the Continue button, you might have to close this screen and click Decision again
+    > If you face an issue with the Continue button not turning blue, you might have to close this screen and click Decision again
 
 6. Click **Continue**
 
@@ -273,7 +325,7 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Done**
 
-1. Under the **Approval group** column, add these selections as per our matrix at the start of this section: Finance managers, Finance controllers, CFO, CFO
+1. Under the **Approval group** column, add these selections as per our matrix at the start of this section: Finance managers, Finance controllers, CFO, CFO (Ensure that CFO is created twice as we have two different scenarios that require CFO approval)
 
     ![relative](images/selectgroups.gif)
     
@@ -309,11 +361,11 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. See if you can fill in the rest according to the matrix below (You have just completed the first row)
 
-![relative](images/approvalsmatrix.png)
+    ![relative](images/approvalsmatrix.png)
 
 29. Your screen should look like the following once complete
 
-![relative](images/completedecision.png)
+    ![relative](images/completedecision.png)
 
 30. Click **Save** on the top right
 
@@ -345,7 +397,7 @@ For this part of the exercise, we will rebuild this following approval matrix
 
     ![relative](images/updaterecordaction.png)
 
-1. Drag the **SAP Sales Order Record** from the Trigger step onto the **Record** field
+1. Drag the **SAP Sales Order Record** from **Trigger - Record Created** within the data column on the right, onto the **Record** field
 
 1. Click **Add field value**
 
@@ -363,7 +415,7 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Under **Decision Table*, search for the decision table we just created, **Sales Order Approval Matrix**
 
-1. Drag in the **SAP Sales Order Record** data pill onto **Sales order record**
+1. Drag in the **SAP Sales Order Record** data pill from **Trigger - Record Created** within the data column on the right, onto **Sales order record**
 
     ![relative](images/soapprovaldecisionflow.gif)
 
@@ -371,11 +423,35 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. You should now see three branches appear for each *Group* we selected as approvers earlier
 
-> **IMPORTANT** For this lab, we will not spend time building out the approval workflow for each branch. The idea here is that you now have the ability to cater to any speicifc workflow approval pattern using the ServiceNow Core *Ask for Approval* action.
+    > **IMPORTANT** For this lab, we will not spend time building out the complete approval workflow for each branch. The idea here is that you now have the ability to cater to any specific workflow approval pattern using the ServiceNow Core *Ask for Approval* action.
 
-23. Now that you understand we will skip the approval building workflow, let's move on to post approval. 
+23. Click on **+** under the first branch
 
-1. Click on **+** under the first branch
+1. Click **Action**
+
+1. Search for **Ask For Approval**, then select the action
+
+    ![relative](images/askforapproval.png)
+
+1. Drag **SAP Sales Order Record** from **Trigger - Record Created** within the data column on the right, onto the **Record** field
+
+1. Since we extended the **Task** table, the **Approval Field** and **Journal Field** should be automatically populated
+
+1. Under rules, change **-Choose approval rule** to **Anyone approves** (We are not factoring an Rejection flow here)
+
+1. Drag over **Approval group** reference from **2 - Make a decision > Result Record** onto the empty field
+
+    ![relative](images/approvalgroup.png)
+
+1. Click **Done**
+
+1. On the **Ask For Approval** action you just added, click on the **Duplicate** icon twice
+
+1. Drag each of the 2 duplicated actions under each of the other branches
+
+    ![relative](images/dupapproval.gif)
+
+1. Outside of the Decision flow, click **Add an Action, Flow Logic, or Subflow**
 
 1. Click **Action**
 
@@ -383,42 +459,34 @@ For this part of the exercise, we will rebuild this following approval matrix
 
     ![relative](images/updatesoselect.png)
 
-20. Under the **Sales Document** field, drag the **Document number** pill onto the field
+20. Under the **Sales Document** field, drag the **Document number** pill from **Trigger - Record Created > SAP Sales Order Record** within the data column on the right, onto the field
 
 21. Change the **Delivery Block** field to **None**
 
-    ![relative](images/addupdateso.gif)
+    ![relative](images/addupdateso.png)
 
 1. Click **Done**
 
 > For reference, this action will remove the delivery block as you see in the image from SAP ECC below, which will allow the order to move to the next stage, which is generally creating a delivery document. 
 ![relative](images/removedeliveryblock.png)
 
-23. On the **Update Sales Order** action you just added, click on the **Duplicate** icon twice
-
-1. Drag each of the 2 duplicated actions under each of the other branches
-
-    ![relative](images/duplicateaction.gif)
-
-1. Under the *Update Sales Order* action, add a new **Action**
+39. Under the *Update Sales Order* action, add a new **Action**
 
 1. Select **Update Record** under **ServiceNow Core**
 
-1. Drag the **SAP Sales Order Record** onto the **Record** field
+1. Drag the **SAP Sales Order Record** pill from **Trigger - Record Created** within the data column on the right, onto the **Record** field
 
 1. Add a field, select **Status** and select **Updated SAP**
 
+    ![relative](images/updatedsap.png)
+
 1. Click **Done**
 
-1. On the **Update SAP Sales Order Record** action you just added, click on the **Duplicate** icon twice
+1. Your entire flow should now look like this
 
-1. Drag each of the 2 duplicated actions under each of the other branches
+    ![relative](images/completedflow.png)
 
-    ![relative](images/updatedsapsorec.gif)
-
-1. Click **Save**
-
-1. Click **Activate**
+1. Click **Activate** on the top right
 
 1. Click **Test**, and select the record that was created via the first flow we created, it should be **SAPSO0001001**
 
@@ -426,11 +494,27 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Your test has finished running. View the flow execution details**
 
-1. Check the execution flow, did it match our Approval Matrix? Your results will vary based on your record.
+1. Check the execution flow, did it match our Approval Matrix? Your results will vary based on your record and should now be in Waiting for approval state after identifying the right approval group
 
     ![relative](images/testdecision.png)
 
 1. If it did not, examine your Decision Builder table again to see if there was anything you missed.
+
+1. Open up the Sales Order record tab (SAPSO0001001)
+
+1. **Refresh** the page
+
+1. Confirm that the **Status** has changed to **Approval triggered**
+
+1. Right click on any **Requested** approval records, and click **Approve**
+
+    ![relative](images/approveso.png)
+
+1. Return to the flow execution screen and click the **Refresh** icon
+
+    ![relative](images/refresh.png)
+
+1. Your flow should now be completed and the record updated
 
 As you can imagine, now that we have these 2 workflows designed, one will essentially trigger off the other: Our custom app will pull Sales Orders from SAP every 2 hours, and for any new Sales Orders picked up, it will be processed via our Decision Table, before routing to the right parties for Approval. Only after approval, will we then update the same Sales Order back in SAP (to remove the delivery block).
 
@@ -476,15 +560,17 @@ For this part of the exercise, we will get our hands a little dirtier in buildin
 >**What is a Multi-row Variable Set (MVRS)?** <br>
 From ServiceNow documentation: Use a multi-row variable set (MRVS) to capture variable data in a grid layout while submitting a catalog item request for a group of entities. For example, for HR during the reorganization of employees, a single record producer should be able to capture the relevant information such as the department and manager for a group of employees
 
-First, let's create the variable set. This time, for this part, we will be working within studio IDE, but don't close your App Engine Studio interface just yet.
+First, let's create the variable set. This time, for this part, we will be working within Studio IDE.
 
-1. In a new tab, go back to the main ServiceNow Polaris UI, and search for **Studio** under *All*, and click on it
+1. On the App Home Screen, click the **Gear** icon
    
-    ![relative](images/studioide.png)
+    ![relative](images/clickgear.png)
 
-1. Studio should open in a new browser tab, and on the modal on screen, your should be able to see **Exercise 2: Financial Close Automation** on the list, click on it
+1. Click **Open app in Dev Studio**
 
-    ![relative](images/studiofca.png)
+    ![relative](images/openindev.png)
+
+1. A new browser tab will open in *Studio IDE*
 
 1. Click **Create Application File** on the top left
 
@@ -520,13 +606,13 @@ First, let's create the variable set. This time, for this part, we will be worki
 
 1. Click **Submit**
 
-1. Create 3 more variables under the **Journal Entry** Variable Set
+1. Create 3 more variables under the **Journal Entry** Variable Set (Repeat steps 12 to 14)
 
-    Order | Question
-    ------------ | -------------
-    200 | Cost center
-    300 | Debit
-    400 | Credit
+    Order | Question | Name (autofilled)
+    ------------ | ------------- | -------------
+    200 | Cost center | cost_center
+    300 | Debit | debit
+    400 | Credit | credit
 
 1. Your Variable Set should now look like this
 
@@ -546,7 +632,7 @@ Now that we have the variable set to capture Journal Entry Lines, let's use this
     ------------ | -------------
     Name | Post Journal Entry
     Table name | Journal Entry Document
-    Script (Scroll down) | Copy and paste the script below
+    Script (Scroll down) | Copy and paste the script below (Overwrite default script)
 
     ```
     (function() {
@@ -586,9 +672,11 @@ Now that we have the variable set to capture Journal Entry Lines, let's use this
     Field | Company code
     Question | Company code    
 
-    ![relative](images/companycodevariable.gif)
+    ![relative](images/companycodevar.png)
 
     > We will only work on this one variable for the sake of time, but you could fill out the rest of the fields if you feel necessary. (*Fiscal year, Posting date*)
+
+1. Click **Submit**
 
 1. Navigate back to the **Post Journal Entry** Record Producer tab
 
@@ -600,7 +688,13 @@ Now that we have the variable set to capture Journal Entry Lines, let's use this
 
     ![relative](images/shiftvs.png)
 
-1. Back on the Record Producer screen, click the **Accessibility** tab, then add **Service Catalog**, and category **Can We Help You?**
+1. Back on the Record Producer screen, click the **Accessibility** tab, 
+
+1. Next to **Catalog**, click on the **Lock** icon
+
+1. Where it says *Select target record*, search and add **Service Catalog**
+
+1. Under category, search and select **Can We Help You?**
 
     ![relative](images/addtocatalog.gif)
 
