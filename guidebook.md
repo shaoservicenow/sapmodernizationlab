@@ -518,19 +518,25 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 As you can imagine, now that we have these 2 workflows designed, one will essentially trigger off the other: Our custom app will pull Sales Orders from SAP every 2 hours, and for any new Sales Orders picked up, it will be processed via our Decision Table, before routing to the right parties for Approval. Only after approval, will we then update the same Sales Order back in SAP (to remove the delivery block).
 
-Well done! You've come to the end of Exercise 1, where you've built a very powerful approval matrix alternative that sits on top of any SAP document to drive the Delegation of Authority process. Of course, this is only the very start, and you can start to include platform capabilties such as SLAs, Approval Delegation periods, Conversational integrations, Mobile Approvals and more that makes the entire process seamless.
+Well done! You've come to the end of Exercise 1, where you've built a very powerful approval matrix alternative that sits on top of any SAP document to drive the Delegation of Authority process. We've gone from 12,000 lines of code to 0 and modifying this workflow to include new decisions will take minutes, not days.
+
+Of course, this is only the very start, and you can start to include platform capabilties such as SLAs, Approval Delegation periods, Conversational integrations, Mobile Approvals and more that makes the entire process seamless.
 
 # Exercise 2: Automating Financial Close - The Journal Entry experience
 
 ## Introduction
 
-The financial close is a critical process that happens regularly (Monthly, Quarterly, Yearly) in a business with the general goal of producing financial reports representative of the company's true financial position. This is a stressful exercise and there is typically a checklist of activities that the finance team has to undertake, for example: Perform inventory count, reoncile account and post Journal Entries, update cash flow statements, balance petty cash funds, any many more.
+The financial close is a critical process that happens regularly (Monthly, Quarterly, Yearly) in a business with the general goal of producing financial reports representative of the company's true financial position. This is a stressful exercise and there is typically a checklist of activities that the finance team has to undertake, for example: 
+- Perform inventory count
+- Reoncile account and post Journal Entries
+- Update cash flow statements
+- Balance petty cash funds, any many more.
 
-Many of these activities also tie back to SAP as the system of record, but this is essentially is a workflow activity, not a record centric one! Navigating across SAP, updating, checking then reporting then becomes a huge headache. In fact, in a 2021 SAPinsider report, 58% of organizations see financial close as the biggest pain point for financial processing, and only 30% of organizations have implemented solutions to automate the SAP financial close process, far below areas such as Account Receivable or Accounts Payable. So can we make this better? Obviously!
+Many of these activities also tie back to SAP as the system of record, but these activities are essentially workflows, not just record transactions! These activities have a start, an end and lifecycle events inbetween. Navigating across SAP, updating, checking then reporting becomes a huge headache. In fact, in a 2021 SAPinsider report, 58% of organizations see financial close as the biggest pain point for financial processing. Only 30% of organizations have implemented solutions to automate the SAP financial close process, far below areas such as Account Receivable or Accounts Payable. So can we make this better? Obviously!
 
 In this exercise, let's focus on one of the key activites, which is Journal Entry posting from ServiceNow to SAP.
 
-> A journal entry is used to record a business transaction in the accounting records of a business. A journal entry is usually recorded in the general ledger; which is then used to create financial statements for the business.The logic behind a journal entry is to record every business transaction in at least two places (known as double entry accounting). <br> In the following diagram, you can se that posting journal entries in the general ledger is among the first tasks in the financial close process. Not on finance users, but sometimes business users as well have to post hundreds or thousand of manual journal entries in each period! <br>
+> A journal entry is used to record a financial transaction in the accounting records of a business. A journal entry is usually recorded in the general ledger, which is then used to create financial statements for the business. The logic behind a journal entry is to record every business transaction in at least two places (known as double entry accounting). <br> In the following diagram, you can se that posting journal entries in the general ledger is among the first tasks in the financial close process. Not only finance users, but sometimes business users as well, have to post hundreds or thousand of manual journal entries in each period! <br>
 ![relative](images/fcprocess.png)
 
 Since you've already gone through the excercise of creating a new app and tables and forms, the setup of these application files for this exercise is already done for you.
@@ -555,7 +561,7 @@ Since you've already gone through the excercise of creating a new app and tables
 
 ## Building the user experience layer
 
-For this part of the exercise, we will get our hands a little dirtier in building the Record Producer for a user to enter the Journal Entry record. As we now need to enable the user to attach a dynamic number of Journal Entry Lines against a parent Journal Entry Document, there is some scripting needed as part of implementing this feature via a Multi-row Variable Set.
+For this part of the exercise, we will get our hands a little dirtier by building a Record Producer for users to create Journal Entry records. As we now need to enable the user to attach a dynamic number of Journal Entry Lines against a parent Journal Entry Document, there is some scripting needed as part of implementing this feature via a Multi-row Variable Set.
 
 >**What is a Multi-row Variable Set (MVRS)?** <br>
 From ServiceNow documentation: Use a multi-row variable set (MRVS) to capture variable data in a grid layout while submitting a catalog item request for a group of entities. For example, for HR during the reorganization of employees, a single record producer should be able to capture the relevant information such as the department and manager for a group of employees
@@ -616,7 +622,11 @@ First, let's create the variable set. This time, for this part, we will be worki
 
 1. Your Variable Set should now look like this
 
-    ![relative](images/completemvrs.png)
+   ![relative](images/completemvrs.png)
+
+> If you cannot see the new Variables, click the related list filter condition to refresh the list.
+
+   ![relative](images/refresh_journal_entry.png)
 
 ### Creating a Record Producer
 
@@ -893,7 +903,7 @@ Now that we can capture this data, let's close off the process by building the i
 
     ![relative](images/executionrecord.png)
 
-1. Confirm that the workflow was executed successfully, then click **Update Record** to expand it
+1. Confirm that the workflow was executed successfully, then click the **Update Record** action to expand it
 
 1. Click the **Record** number, and confirm that the **Document number** field is now populated
 
@@ -911,4 +921,4 @@ Now that we can capture this data, let's close off the process by building the i
 
 Congratulations on completing this lab! You've built 2 apps that will help Modernize SAP. One for automating approvals on any object from SAP, and another for assisting in the Financial Close process by giving users a better experience when posting Journal Entries. Just these alone will tremendously alleviate a great amount of manual effort that was previously done through SAP + multiple channels.
 
-There are obviously so many more areas we can help with, from P2P to OTC, shifting customizations out of SAP is the number 1 priority for many customers, and ServiceNow Creator Workflows allows you to do that all on our industry leading Low-code Application Development Platform.
+There are obviously so many more areas Creator Workflows can help, from P2P to OTC. Shifting customizations out of SAP is the number 1 priority for many customers. ServiceNow Creator Workflows allows you to do that all on our industry leading Low-code Application Development Platform.
