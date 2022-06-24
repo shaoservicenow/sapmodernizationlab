@@ -4,11 +4,11 @@
 
 In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform. Be prepared, there are no-code elements, as well as some basic scripting requirements in this lab, but not to worry, I'll be here to guide you through the process.
 
-You'll learn how the platform can be a catch-all for everything above SAP as a system of engagement and to fuel ERP modernization.
+You'll learn how the platform can be a catch-all for everything above SAP as a system of engagement; the fuel for ERP modernization.
 
 ## Background
 
-A business process refers to a set of activities that have to be performed to complete an end-to-end business scenario. There are multiple business processes in ERPs, the most common ones are listed below:
+A business process is a set of activities that have to be performed to complete an end-to-end business scenario. There are multiple ERP business processes, the most common ones are listed below:
 
 Name | What is it?
 ------------ | -------------
@@ -20,17 +20,17 @@ Plan to Inventory | Plan to Inventory (P2I) the process of determining the optim
 Quote to Cash | Quote-to-cash (QTC) process encompasses many sales, account management, order fulfillment, billing, and accounts receivables functions.
 Record to Report | Record to report (R2R) is a finance and accounting management process that involves collecting, processing and presenting accurate financial data.
 
-Often times, there are multiple exceptions outside of an expected business process flow (sometimes refered to as a "Happy Flow") that organizations need to account for - either by customizing the ERP, or relying on manual processes that sit outside of the ERP. 
+Often times, there are multiple exceptions outside of an expected business process flow (sometimes refered to as a "Happy Flow") that organizations need to account for - either by customizing the ERP Software, or relying on manual processes that sit outside it. 
 
-Then, there is also the issue of data availability. There is a learning curve to navigating ERP systems due to the complexity of the business objects, everyday business users might not have access to the right environment and training to use these ERP systems, and need a friendlier way to interact with the data.
+Then, there is also the issue of data availability. There is a learning curve to navigating ERP systems due to the complexity of the business objects. Everyday business users might not have access to the right environment and training to use these ERP systems. There needs to be a friendlier way to interact with the data.
 
-ServiceNow Creator Workflows solves these challenges with it's low code capabilities paired with easy to configure integrations to various ERP systems. We will focus on SAP in this lab.
+ServiceNow Creator Workflows solves these challenges with it's low code capabilities paired with easy to configure integrations into ERP systems. We will focus on SAP in this lab.
 
 # Exercise 1: Delegation of Authority
 
 ## Introduction
 
-When it comes to automating ERP workflows, nothing is more painful, or more time consuming than the approval cycle. Couple that with a rigid system like SAP, and it becomes difficult to track, let alone automate approvals on everyday transactions like Purchase Orders, Sales Orders, Invoices, etc. A common term for this process is Delegation of Authority (DoA), or Approval Matrix.
+When it comes to automating ERP workflows, nothing is more painful, or more time consuming than the approval cycle. Couple that with a rigid system like SAP, and it becomes difficult to track, let alone automate approvals on everyday transactions like Purchase Orders, Sales Orders, Invoices, etc. A common term for this process is Delegation of Authority (DoA), or an Approval Matrix.
 
 Within SAP, [there is such a feature](https://help.sap.com/doc/132b1ea8da1d4281a2da23f3cf506809/2.0.06/en-US/07dc534035524965a902c5bd6ffdbc3a.html), but it is limited in capability and does not scale for exceptional workflows.
 
@@ -104,7 +104,7 @@ We will now create a table to store Sales Order document data from SAP.
 
 1. Click **Edit table**
 
-1. Close the pop-up dialog
+1. If presented with the **GETTING STARTED** pop-up, close it.
 
 1. You should now be on tha *Table Builder* interface. Click **Add new field**, and add the following fields:
 
@@ -194,25 +194,25 @@ Great, you now have a simple table to store Sales Order data via the SAP integra
 
     ![relative](images/sapsearch.png)
 
-> You should be able to see a few different SAP spokes show up. There are 2 different integration methods to both SAP ECC (Older version) and SAP S/4 HANA available in ServiceNow's out of the box integrations available in the Enterprise package of Automation Engine. 
+> You should be able to see a few different SAP spokes show up. There are 2 different out of the box integration methods to both SAP ECC (Older version) and SAP S/4 HANA. These integration spokes are available in the Enterprise package of Automation Engine. 
 <br> <br>
-Let's break down what these mean: 
+Let's break down the available spokes and when to use them: 
 <br><br>
-**SAP ECC**: Most of the companies running on SAP are running on SAP ECC. It is the offering for a large enterprise. Companies with large volume, complex business processes and operating in multiple geographies go for SAP ECC. It is built on ABAP stack. 
+**SAP ECC**: Most of the companies using SAP are running on SAP ECC. It is the offering for a large enterprise. Companies with large volume, complex business processes and operating in multiple geographies go for SAP ECC. It is built on ABAP stack. 
 <br><br>
-**SAP S/4 HANA**: This is the latest release of SAP ERP and it can run only on HANA database. With this release, SAP has simplified their core database architecture. This together with in-memory processing enables business to do complex business computation within minutes.
+**SAP S/4 HANA**: This is the latest release of SAP ERP and it can run only on HANA database. With this release, SAP has simplified their core database architecture. This together with in-memory processing enables business to do complex business computation faster than ECC.
 <br><br>
 **Integration via IDoc**: IDOCs or intermediary documents are another way to exchange information to and from SAP. If you are more aware of web technologies, consider IDOCs as XML. It consists of neatly defined data segments with parent and child nodes. There are specific steps to configure inbound and outbound IDOCs.
 <br><br>
-**Integration via RFC**: If you are looking at a real time SAP system integration scenario, RFC is probably the best way to go. In this case, certain functions are enabled for remote call. One such function could be for example sales order creation. Third party applications can integrate with SAP using these RFCs for a real time communication and business process validation (example price computation, minimum order check etc.).
+**Integration via RFC**: If you are looking at a real time SAP system integration scenario, RFC is probably the best way to go. In this case, certain functions are enabled for remote call. One such function could be, for example, sales order creation. Third party applications can integrate with SAP using these RFCs for a real time communication and business process validation (example price computation, minimum order check etc.).
 
-15. Click **SAP ERP**, this is a simulation of the actions available in the other prebuilt spokes.
+15. Click **SAP ERP**, for this lab we will be using a custom spoke which simulates integration to SAP. This spoke includes only a few of the actions available in the OOTB spokes.
 
 1. Click **Look up Sales Orders**
 
     ![relative](images/lookupspokeselect.png)
 
-1. In the action that shows on the screen, have a quick look at what shows up. These are a subset of the filter options available in the OOTB spokes to retrieve a list of Sales Orders. In this exercise, we will only return one Sales Order record for easier accesibility.
+1. Have a look at the action that shows on the screen. These are a subset of the filter options available in the OOTB spokes to retrieve a list of Sales Orders. In this exercise, we will only return one Sales Order record for easier accesibility.
 
     ![relative](images/lookupsalesorderaction.png)
 
@@ -220,7 +220,7 @@ Let's break down what these mean:
 
 1. Leave everything as it is, and click **Done**
 
-1. Click **Add an Action, Flow Logic, or Subflow**
+1. Click **Add an Action, Flow Logic, or Subflow** and add another action
 
 1. Under **ServiceNow Core**, click **Create Record**
 
@@ -351,11 +351,11 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Done**
 
-1. Click on the top left selection box, select **less than**, and Value **5000**
+1. Click in the first cell under **Sales order amount**, select **less than**, and Value **5000**
 
     ![relative](images/lessthan5k.png)
 
-1. On the box to the right, select **is**, and Value **Standard sales order**
+1. In the corresponding cell for **Sales order type**, select **is**, and Value **Standard sales order**
 
     ![relative](images/standardsoselect.png)
 
@@ -411,9 +411,9 @@ For this part of the exercise, we will rebuild this following approval matrix
 
 1. Click **Flow Logic**, then **Make a decision**
 
-1. Under *Decision Label*, type **SO Approval Matrix**
+1. Under **Decision Label**, type **SO Approval Matrix**
 
-1. Under **Decision Table*, search for the decision table we just created, **Sales Order Approval Matrix**
+1. Under **Decision Table**, search for the decision table we just created, **Sales Order Approval Matrix**
 
 1. Drag in the **SAP Sales Order Record** data pill from **Trigger - Record Created** within the data column on the right, onto **Sales order record**
 
