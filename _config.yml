@@ -1,5 +1,5 @@
 remote_theme: just-the-docs/just-the-docs
-logo: "/servicenow-logo.png"
+logo: "servicenow-logo.png"
 back_to_top: true
 back_to_top_text: "Back to top"
 footer_content: Shao Wei Tan, 16 October 2022, based on the San Diego release.
