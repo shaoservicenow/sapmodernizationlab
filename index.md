@@ -1,3 +1,10 @@
+---
+layout: default
+title: Introduction
+nav_order: 1
+permalink: /
+---
+
 # SAP Modernization Lab
 
 ## Goal
