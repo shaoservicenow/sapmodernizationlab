@@ -1,3 +1,9 @@
+---
+layout: default
+title: Full guide
+nav_exclude: true
+---
+
 # SAP Modernization Lab
 
 ## Goal
