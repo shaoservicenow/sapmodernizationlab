@@ -2,7 +2,6 @@
 layout: default
 title: Exercise 1 - DOA
 nav_order: 2
-permalink: /
 ---
 
 # Exercise 1: Delegation of Authority

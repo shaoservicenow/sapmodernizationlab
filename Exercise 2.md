@@ -2,7 +2,6 @@
 layout: default
 title: Exercise 2 - FCA
 nav_order: 3
-permalink: /
 ---
 
 # Exercise 2: Automating Financial Close - The Journal Entry experience
