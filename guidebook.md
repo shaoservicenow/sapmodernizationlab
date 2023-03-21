@@ -2,7 +2,7 @@
 
 ## Goal
 
-In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform. Be prepared, there are no-code elements, as well as some basic scripting requirements in this lab, but not to worry, I'll be here to guide you through the process.
+In this lab, you will learn how ServiceNow Creator Workflows can help you to modernize ERP processes with the tools and functionalities available on the ServiceNow platform. Be prepared, there are no-code elements, as well as some basic scripting requirements in this lab, but not to worry, I'll be here to guide you through the process!
 
 You'll learn how the platform can be a catch-all for everything above SAP as a system of engagement; the fuel for ERP modernization.
 
